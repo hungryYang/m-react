@@ -22,7 +22,7 @@ export interface UpdateQueue<State> {
 		pending: Update<State> | null;
 	};
 }
-// 初始化状态机
+// 初始化状态机 更新对应的数据结构Update
 export const createUpdate = <State>(action: Action<State>): Update<State> => {
 	return {
 		action
@@ -30,24 +30,31 @@ export const createUpdate = <State>(action: Action<State>): Update<State> => {
 };
 
 /**
- * 消费Update的数据结构，类似fiber树，fiber节点上的多个Update会组成链表包含在updateQueue中
+ * 保存Update的数据结构，类似fiber树，fiber节点上的多个Update会组成链表包含在updateQueue中
  */
 
-export const createUpdateQueue = <Action>() => {
+export const createUpdateQueue = <State>() => {
 	return {
 		shared: {
 			pending: null
 		}
-	} as UpdateQueue<Action>;
+	} as UpdateQueue<State>;
 };
 
-export const enqueueUpdate = <Action>(
-	updateQueue: UpdateQueue<Action>,
-	update: Update<Action>
+/**
+ * 将Update插入到updateQueue中
+ * */
+export const enqueueUpdate = <State>(
+	updateQueue: UpdateQueue<State>,
+	update: Update<State>
 ) => {
 	updateQueue.shared.pending = update;
 };
 
+/**
+ * 消费UpdateQueue
+ * 基于基础的状态baseState以及pendingUpdate得到最终状态memoizedState
+ * */
 export const processUpdateQueue = <State>(
 	baseState: State,
 	pendingUpdate: Update<State> | null

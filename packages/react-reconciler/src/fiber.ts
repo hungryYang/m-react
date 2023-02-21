@@ -1,6 +1,7 @@
 import { Props, Key, Ref } from 'shared/ReactTypes';
 import { workTag } from './workTags';
-import { Flags, NoFlags } from './fiberFlags';
+import { Flags, NoFlags, Placement } from './fiberFlags';
+import { Container } from 'hostConfig';
 
 export class FiberNode {
 	tag: workTag;
@@ -15,10 +16,11 @@ export class FiberNode {
 	index: number;
 
 	pendingProps: Props;
+	memoizedState: any;
 	memoizedProps: Props | null;
 	flags: Flags;
 	alertnate: FiberNode | null;
-
+	updateQueue: unknown;
 	/**
 	 * @params
 	 *  tag: FiberNode是什么类型的节点
@@ -36,7 +38,7 @@ export class FiberNode {
 
 		// 构成树状结构
 		// 根节点  BFS深度遍历
-		this.return = null; // 指向父fiberNoode
+		this.return = null; // 指向父fiberNode
 		this.sibling = null;
 		this.child = null;
 		this.index = 0; //遍历同级节点位置记录
@@ -46,7 +48,7 @@ export class FiberNode {
 		// 作为工作单元
 		this.pendingProps = pendingProps; // 刚开始工作时Props是什么
 		this.memoizedProps = null; // 工作完以后确定的Props
-
+		this.memoizedState = null;
 		/**
 		 * 	比如挂载<div></div> jsx("div") 对应改变fiberNode null，生成子fiberNode对应标记Placement
 		 * 	将<div></div>更新为<p></p> jsx("p") 对应改变fiberNode { type: "div" }，生成子fiberNode 对应标记 Deletion Placement
@@ -56,7 +58,53 @@ export class FiberNode {
 		 * 	双缓存模式
 		 */
 		this.alertnate = null; // 	记录切换 current fiberNode 和 workingProgram fiberNode
+		this.updateQueue = null;
 
 		this.flags = NoFlags; // 改变时的对应标记
 	}
 }
+/**
+ * ReactDOM.createRoot(rootElement).render(<App/>)
+ * createRoot  生成- fiberRootNode
+ * 							current↓    ↑ stateNode
+ * rootElement 生成- hostRootFiber
+ * 								child↓    ↑ return
+ *                  		App
+ * */
+export class FiberRootNode {
+	container: Container;
+	current: FiberNode;
+	finishedWork: FiberNode | null;
+
+	constructor(container: Container, hostRootFiber: FiberNode) {
+		this.container = container;
+		this.current = hostRootFiber;
+		hostRootFiber.stateNode = this;
+		this.finishedWork = null;
+	}
+}
+
+export const createWorkInProgress = (
+	current: FiberNode,
+	pendingProps: Props
+): FiberNode => {
+	let wip = current.alertnate;
+	if (wip === null) {
+		// mount
+		wip = new FiberNode(current.tag, pendingProps, current.key);
+		wip.stateNode = current.stateNode;
+
+		wip.alertnate = current;
+		current.alertnate = wip;
+	} else {
+		wip.pendingProps = pendingProps;
+		wip.flags = NoFlags;
+	}
+
+	wip.type = current.type;
+	wip.updateQueue = current.updateQueue;
+	wip.child = current.child;
+	wip.memoizedState = current.memoizedState;
+	wip.memoizedProps = current.memoizedProps;
+	return wip;
+};
