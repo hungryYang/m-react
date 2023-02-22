@@ -16,12 +16,14 @@ import { scheduleUpdateOnFiber } from './workLoop';
 export function createContainer(container: Container) {
 	const hostRootFiber = new FiberNode(HostRoot, {}, null);
 	const root = new FiberRootNode(container, hostRootFiber);
+	// 创建更新机制队列
 	hostRootFiber.updateQueue = createUpdateQueue();
 	return root;
 }
 
 /**
  * 执行render后内部执行
+ * .render(<App/>) App组件对应的element就是element
  * */
 export function updateContainer(
 	element: ReactElementType | null,

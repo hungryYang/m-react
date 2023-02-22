@@ -1,10 +1,10 @@
-import { Props, Key, Ref } from 'shared/ReactTypes';
-import { workTag } from './workTags';
-import { Flags, NoFlags, Placement } from './fiberFlags';
+import { Key, Props, ReactElementType, Ref } from 'shared/ReactTypes';
+import { FunctionComponent, HostComponent, WorkTag } from './workTags';
+import { Flags, NoFlags } from './fiberFlags';
 import { Container } from 'hostConfig';
 
 export class FiberNode {
-	tag: workTag;
+	tag: WorkTag;
 	key: Key;
 	stateNode: any;
 	type: any;
@@ -19,6 +19,7 @@ export class FiberNode {
 	memoizedState: any;
 	memoizedProps: Props | null;
 	flags: Flags;
+	subtreeFlags: Flags;
 	alertnate: FiberNode | null;
 	updateQueue: unknown;
 	/**
@@ -27,7 +28,7 @@ export class FiberNode {
 	 * 	pendingProps: 接下来需要改变的props
 	 *  key: ReactElement Key
 	 * */
-	constructor(tag: workTag, pendingProps: Props, key: Key) {
+	constructor(tag: WorkTag, pendingProps: Props, key: Key) {
 		// 实例
 		this.tag = tag;
 		this.key = key;
@@ -61,6 +62,7 @@ export class FiberNode {
 		this.updateQueue = null;
 
 		this.flags = NoFlags; // 改变时的对应标记
+		this.subtreeFlags = NoFlags;
 	}
 }
 /**
@@ -97,8 +99,10 @@ export const createWorkInProgress = (
 		wip.alertnate = current;
 		current.alertnate = wip;
 	} else {
+		// update
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
+		wip.subtreeFlags = NoFlags;
 	}
 
 	wip.type = current.type;
@@ -108,3 +112,18 @@ export const createWorkInProgress = (
 	wip.memoizedProps = current.memoizedProps;
 	return wip;
 };
+
+export function createFiberFromElement(element: ReactElementType): FiberNode {
+	const { type, key, props } = element;
+	let fiberTag: WorkTag = FunctionComponent;
+
+	if (typeof type === 'string') {
+		// div type: div
+		fiberTag = HostComponent;
+	} else if (typeof type !== 'function' && __DEV__) {
+		console.warn('未定义的type类型', element);
+	}
+	const fiber = new FiberNode(fiberTag, props, key);
+	fiber.type = type;
+	return fiber;
+}

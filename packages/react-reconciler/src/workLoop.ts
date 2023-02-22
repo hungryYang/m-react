@@ -28,7 +28,7 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
 	return null;
 }
 
-function renderRoot(root: FiberNode) {
+function renderRoot(root: FiberRootNode) {
 	// 初始化
 	prepareFreshStack(root);
 
@@ -43,6 +43,12 @@ function renderRoot(root: FiberNode) {
 			workInProgress = null;
 		}
 	} while (true);
+
+	const finishedWork = root.current.alertnate;
+	root.finishedWork = finishedWork;
+
+	// 根据 wip fiberNode树和树中的flags
+	// commitRoot(root);
 }
 
 function workLoop() {
