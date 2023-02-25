@@ -49,20 +49,21 @@ export const jsx = (type: ElementType, config: any, ...maybeChildren: any) => {
 		if ({}.hasOwnProperty.call(config, prop)) {
 			props[prop] = val;
 		}
-		// react 的 props.children
-		const maybeChildrenLength = maybeChildren.length;
-		if (maybeChildrenLength) {
-			if (maybeChildrenLength === 1) {
-				props.children = maybeChildren[0];
-			} else {
-				props.children = maybeChildren;
-			}
-		}
-
-		return ReactElement(type, key, ref, props);
 	}
+	// react 的 props.children
+	const maybeChildrenLength = maybeChildren.length;
+	if (maybeChildrenLength) {
+		if (maybeChildrenLength === 1) {
+			props.children = maybeChildren[0];
+		} else {
+			props.children = maybeChildren;
+		}
+	}
+
+	return ReactElement(type, key, ref, props);
 };
 export const jsxDEV = (type: ElementType, config: any) => {
+	console.log('ReactElement(type, key, ref, props)');
 	const props: Props = {};
 	let key: Key = null;
 	let ref: Ref = null;
@@ -86,7 +87,7 @@ export const jsxDEV = (type: ElementType, config: any) => {
 		if ({}.hasOwnProperty.call(config, prop)) {
 			props[prop] = val;
 		}
-		// react 的 props.children
-		return ReactElement(type, key, ref, props);
 	}
+	// react 的 props.children
+	return ReactElement(type, key, ref, props);
 };
