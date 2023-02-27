@@ -11,6 +11,7 @@
  * 统一更新机制
  * 每次状态更新都会创建一个保存更新状态相关内容的对象，在render阶段的beginwork中会根据Update对象计算新state
  * */
+import { Dispatch } from 'react/src/currentDispatcher';
 import { Action } from 'shared/ReactTypes';
 
 export interface Update<State> {
@@ -21,6 +22,7 @@ export interface UpdateQueue<State> {
 	shared: {
 		pending: Update<State> | null;
 	};
+	dispatch: Dispatch<State> | null;
 }
 // 初始化状态机 更新对应的数据结构Update
 export const createUpdate = <State>(action: Action<State>): Update<State> => {
@@ -37,7 +39,8 @@ export const createUpdateQueue = <State>() => {
 	return {
 		shared: {
 			pending: null
-		}
+		},
+		dispatch: null
 	} as UpdateQueue<State>;
 };
 
