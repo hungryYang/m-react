@@ -8,8 +8,8 @@ import { ReactElementType } from 'shared/ReactTypes';
 export function createRoot(container: Container) {
 	const root = createContainer(container);
 	return {
-		render(element: JSX.Element) {
-			updateContainer(element, root);
+		render(element: ReactElementType) {
+			return updateContainer(element, root);
 		}
 	};
 }

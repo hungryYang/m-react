@@ -7,7 +7,7 @@ import {
 	HostRoot,
 	HostText
 } from './workTags';
-import { processUpdateQueue, UpdateQueue } from './updateQuete';
+import { processUpdateQueue, UpdateQueue } from './updateQueue';
 import { ReactElementType } from 'shared/ReactTypes';
 import { mountChildFibers, reconcileChildFibers } from './childFibers';
 import { renderWithHooks } from './fiberHooks';

@@ -14,7 +14,7 @@ import {
 	UpdateQueue,
 	createUpdate,
 	enqueueUpdate
-} from './updateQuete';
+} from './updateQueue';
 import { scheduleUpdateOnFiber } from './workLoop';
 let currentlyRenderingFiber: FiberNode | null = null;
 let workInProgressHook: Hook | null = null; // 指向当前正在处理的hook
@@ -67,7 +67,7 @@ function mountState<State>(
 
 	const queue = createUpdateQueue<State>();
 	hook.updateQueue = queue;
-
+	hook.memoizedState = memoizedState;
 	// @ts-ignore
 	const dispatch = dispatchSetState.bind(null, currentlyRenderingFiber, queue);
 	queue.dispatch = dispatch;
