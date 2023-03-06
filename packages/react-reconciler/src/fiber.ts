@@ -22,6 +22,7 @@ export class FiberNode {
 	subtreeFlags: Flags;
 	alertnate: FiberNode | null;
 	updateQueue: unknown;
+	deletions: FiberNode[] | null;
 	/**
 	 * @params
 	 *  tag: FiberNode是什么类型的节点
@@ -60,6 +61,7 @@ export class FiberNode {
 		 */
 		this.alertnate = null; // 	记录切换 current fiberNode 和 workingProgram fiberNode
 		this.updateQueue = null;
+		this.deletions = null;
 
 		this.flags = NoFlags; // 改变时的对应标记
 		this.subtreeFlags = NoFlags;
@@ -103,6 +105,7 @@ export const createWorkInProgress = (
 		wip.pendingProps = pendingProps;
 		wip.flags = NoFlags;
 		wip.subtreeFlags = NoFlags;
+		wip.deletions = null;
 	}
 
 	wip.type = current.type;
