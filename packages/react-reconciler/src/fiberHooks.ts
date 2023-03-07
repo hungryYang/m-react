@@ -17,9 +17,9 @@ import {
 	processUpdateQueue
 } from './updateQueue';
 import { scheduleUpdateOnFiber } from './workLoop';
-let currentlyRenderingFiber: FiberNode | null = null;
+let currentlyRenderingFiber: FiberNode | null = null; // 记录当前正在执行的函数组件的FiberNode
 let workInProgressHook: Hook | null = null; // 指向当前正在处理的hook
-let currentHook: Hook | null = null;
+let currentHook: Hook | null = null; // 更新时的数据来源
 const { currentDispatcher } = internals;
 interface Hook {
 	memoizedState: any;
