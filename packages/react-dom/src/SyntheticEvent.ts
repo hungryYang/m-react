@@ -11,7 +11,7 @@
  * 	- 更新属性时
  * */
 import { Props } from 'shared/ReactTypes';
-import { Container } from './hostConfig';
+import { Container } from 'hostConfig';
 
 export const elementPropsKey = '__props';
 const validEventTypeList = ['click'];
